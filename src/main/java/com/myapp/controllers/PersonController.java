@@ -1,12 +1,17 @@
 package com.myapp.controllers;
 
+
 import com.myapp.entity.Person;
-import com.myapp.repository.PersonRepository;
+import com.myapp.repository.MainRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,18 +20,16 @@ import java.util.List;
 @RequestMapping(value ="/api")
 public class PersonController {
     @Autowired
-    PersonRepository personRepository;
+    @Resource(name = "${connType}")
+    MainRepository mainRepository;
+
 
     @GetMapping("/person")
     public ResponseEntity<List<Person>> getAllPerson() {
         try {
-            List<Person> persons = new ArrayList<>();
+            List<Person> persons;
 
-            persons = personRepository.findAll();
-            System.out.println(persons.size());
-            for (Person p : persons) {
-                System.out.println(p.getName());
-            }
+            persons = mainRepository.findAll();
 
             if (persons.isEmpty()) {
                 return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -41,36 +44,23 @@ public class PersonController {
 
     @PostMapping("/person")
     public ResponseEntity<Integer> AddPerson(@RequestBody Person person){
-        if(person.getName()==null || person.getEmail()==null){
-            return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
-        }
-        else{
-           return new ResponseEntity<>(personRepository.save(person),HttpStatus.OK) ;
-        }
+        mainRepository.save(person);
+        return new ResponseEntity<>(null,HttpStatus.OK) ;
     }
 
     @DeleteMapping("/person/{id}")
-    public ResponseEntity<Integer> DeletePerson(@PathVariable("id")Long id){
-        if(id!=null){
-            return new ResponseEntity<>(personRepository.deleteById(id),HttpStatus.OK);
-        }
-        else return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Integer> DeletePerson(@PathVariable("id") Long id){
+        mainRepository.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/person/{id}")
-    public ResponseEntity<Person> GetSinglePersonByID(@PathVariable("id")Long id){
-        if(id!=null){
-            return new ResponseEntity<>(personRepository.findById(id),HttpStatus.OK);
-        }
-        else return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Person> GetPerson(@PathVariable("id") Long id){
+        return new ResponseEntity<>(mainRepository.findById(id),HttpStatus.OK);
     }
 
     @PutMapping("/person/{id}")
-    public ResponseEntity<Integer> UpdatePersonById(@PathVariable("id")Long id, @RequestBody Person person){
-        person.setId(id);
-        if(person.getName()!=null || person.getEmail()!=null || id!=null){
-            return new ResponseEntity<>(personRepository.update(person),HttpStatus.OK);
-        }
-        else return  new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Person> UpdatePerson(@PathVariable("id") Long id,@RequestBody Person person){
+        return new ResponseEntity<>(mainRepository.updateById(person),HttpStatus.OK);
     }
 }

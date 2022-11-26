@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>I AM RETARDED</title>
+</head>
+<link rel='stylesheet' href='styles.css'>
+<body onload="BuildPersonTable()">
+<div class="text">
+    Люди<br>
+</div>
+
+<form name="addPeople">
+    <label>
+        <p><b>Имя:</b><br>
+            <input type="text" id="name">
+    </label>
+    <label>
+        <p><b>Почта:</b><br>
+            <input type="text" id="mail">
+    </label>
+    <br>
+    <input type="submit" value="Submit" onclick="return AddPeople()">
+    <br>
+</form>
+
+<form name = "deletePeople">
+    <label>
+        <p><b>Удалить по ID:</b></p>
+        <input type="number" id="numberToDelete">
+    </label>
+    <br>
+    <input type="submit" value="Submit" onclick="return DeletePersonByID()">
+    <br>
+</form>
+
+<form name = "updatePeople">
+    <label>
+        <p><b>Получить по ID:</b></p>
+        <input type="number" id="updateId">
+        <input type="text" id="updateName">
+        <input type="text" id="updateEmail">
+    </label>
+    <br>
+    <input type="button" value="GetById" onclick="return GetUserById()">
+    <input type="submit" value="Update" onclick="return UpdateById()">
+    <br>
+</form>
+<table id="personTable">
+    <tr><td class="td" onclick="return GetUserById()"></td></tr>
+</table>
+
+</body>
+</html>
+
+<script>
+    function UpdateById(){
+        let HttpRequest = new XMLHttpRequest();
+        let url = "/api/person/"+document.getElementById("updateId").value;
+        HttpRequest.open("PUT", url, false);
+        HttpRequest.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+        let body = {};
+        body.id = document.getElementById("updateId").value;
+        body.name = document.getElementById("updateName").value;
+        body.email = document.getElementById("updateEmail").value;
+
+        HttpRequest.send(JSON.stringify(body));
+    }
+
+    function GetUserById(){
+        let object = JSON.parse(Get("/api/person/"+document.getElementById("updateId").value).responseText);
+        if(object.status===500){
+            document.getElementById("PersonById").innerHTML = 'DONT EXIST';
+            return false;
+        }
+        document.getElementById("updateName").value=object.name;
+        document.getElementById("updateEmail").value=object.email;
+    }
+
+    function DeletePersonByID(){
+        let HttpRequest = new XMLHttpRequest();
+        let url = "/api/person/"+document.getElementById("numberToDelete").value;
+
+        HttpRequest.open("DELETE",url,false);
+        HttpRequest.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+        HttpRequest.send(null);
+    }
+
+    function BuildPersonTable() {
+
+        let objects = JSON.parse(Get("/api/person").responseText);
+        let table = document.getElementById("personTable");
+        table.innerHTML = "";
+        for (let i = 0; i < objects.length; i++) {
+            let tr = document.createElement("tr");
+            let th = document.createElement("th");
+            th.setAttribute("scope", "row");
+            th.appendChild(document.createTextNode(objects[i].id + " "));
+            tr.appendChild(th);
+            let td1 = document.createElement("td");
+            td1.appendChild(document.createTextNode(objects[i].name + " "));
+            tr.appendChild(td1);
+            let td2 = document.createElement("td");
+            td2.appendChild(document.createTextNode(objects[i].email + " "));
+            tr.appendChild(td2);
+            table.appendChild(tr);
+        }
+    }
+
+    function Get(requestUrl) {
+        let Httpreq = new XMLHttpRequest(); // a new request
+        Httpreq.open("GET", requestUrl, false);
+        Httpreq.send(null);
+        if (Httpreq.status === 400) {
+            $('#error-text').text("Bad request to GET " + requestUrl);
+            $('#myModal').modal('show');
+        }
+        if (Httpreq.status === 404) {
+            $('#error-text').text("Not found GET " + requestUrl);
+            $('#myModal').modal('show');
+        }
+        return Httpreq
+    }
+
+    function AddPeople() {
+        let HttpRequest = new XMLHttpRequest();
+        let url = "/api/person";
+        HttpRequest.open("POST", url, false);
+        HttpRequest.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+        let body = {};
+        body.name = document.getElementById("name").value;
+        body.email = document.getElementById("mail").value;
+
+        HttpRequest.send(JSON.stringify(body));
+    }
+
+</script>

@@ -5,19 +5,19 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "users")
 @Getter
 @Setter
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 public class Person {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @NonNull
     private String name;
-    @NonNull
+
     private String email;
 
 }

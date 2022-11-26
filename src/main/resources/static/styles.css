@@ -1,0 +1,50 @@
+input[type=text], select,input[type=number] {
+    width: 30%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+input[type=submit], input[type=button] {
+    width: 30%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type=submit]:hover {
+    background-color: #45a049;
+}
+
+input[type=button]:hover {
+    background-color: #265727;
+}
+
+.text{
+    font-size: 50px;
+}
+
+table {
+    font-family: 'Courier New', Courier, monospace;
+    width: 20%;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+tr:nth-child(even) {
+    background-color: #f2f2f29c;
+}
+
+td,
+th {
+    border: 1px solid black;
+    border-collapse: collapse;
+    text-align: center;
+    padding: 8px;
+}
