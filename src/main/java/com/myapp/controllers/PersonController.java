@@ -4,6 +4,8 @@ package com.myapp.controllers;
 import com.myapp.entity.Person;
 import com.myapp.repository.MainRepository;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value ="/api")
+@ApiOperation("Person API")
 public class PersonController {
     @Autowired
     @Resource(name = "${connType}")
